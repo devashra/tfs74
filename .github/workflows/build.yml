@@ -11,27 +11,28 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
-      
+      uses: actions/checkout@v4
+
     - name: Install MinGW
       uses: egor-tensin/setup-mingw@v2
       with:
-        version: "8.1.0"
         platform: x86_64
 
-    - name: Apply Legacy Flags
+    - name: Configure Build Flags
+      shell: pwsh
       run: |
-        echo "CFLAGS=-std=gnu++03 -static-libgcc -static-libstdc++ -DWIN32_LEAN_AND_MEAN -lws2_32" >> $Env:GITHUB_ENV
+        echo "CFLAGS=-std=gnu++03 -static-libgcc -static-libstdc++ -DWIN32_LEAN_AND_MEAN" >> $Env:GITHUB_ENV
 
-    - name: Build
+    - name: Build TFS 7.4
+      shell: pwsh
       run: |
-        g++ -O2 ^
-        -o forgottenserver.exe ^
-        src/*.cpp ^
+        g++ -O2 `
+        src/*.cpp `
+        -o forgottenserver.exe `
         -lwsock32 -lws2_32 -static-libgcc -static-libstdc++
 
     - name: Upload Artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: forgottenserver-7.4-windows
         path: forgottenserver.exe
